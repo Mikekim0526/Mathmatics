@@ -20,7 +20,7 @@ void draw(){
   strokeWeight(1);
   point(30+n*X,height-30-n*Y);
   strokeWeight(1);
-  stroke(0, 100);
+  stroke(0,200);
   line(30+n*X,height-30-n*Y,30+n*pX,height-30-n*pY);
   pX=X;
   pY=Y;
