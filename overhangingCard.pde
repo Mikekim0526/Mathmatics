@@ -1,8 +1,8 @@
 int count;
 
-int blockN=200;         //Amount of blocks to stack
-float blockW=240;        //Width of blocks
-int blockH=4;         //Height of blocks
+int blockN=800;         //Amount of blocks to stack
+float blockW=240;       //Width of blocks
+float blockH=1;         //Height of blocks
 
 
 FloatList px;
@@ -34,7 +34,7 @@ void draw() {
   translate(30+px.get(count), height-30-py.get(count));
   stackBlock(count);
   countBlock(count);
-  delay(20);
+  delay(5);
 }
 
 
@@ -54,10 +54,10 @@ void stackBlock(int count) {
 
 /*
 float A(int n) {
-  float An = px.get(n-1)+blockW/(2*n);
-  return An;
-}
-*/
+ float An = px.get(n-1)+blockW/(2*n);
+ return An;
+ }
+ */
 
 void countBlock(int cnt) {
   if (cnt<=blockN) {
