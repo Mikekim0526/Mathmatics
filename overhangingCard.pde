@@ -1,9 +1,8 @@
 int count;
 
-int blockN=800;         //Amount of blocks to stack
-float blockW=240;       //Width of blocks
-float blockH=1;         //Height of blocks
-
+int blockN=5000;         //Amount of blocks to stack
+float blockW=200;       //Width of blocks
+float blockH=0.25;         //Height of blocks, default=1
 
 FloatList px;
 FloatList py;
@@ -11,7 +10,7 @@ FloatList py;
 
 void setup() {
   background(255);
-  size(1200, 900);
+  size(1200, 600);
 
   px = new FloatList();
   py = new FloatList();
@@ -31,18 +30,23 @@ void draw() {
 
   px.set(count, px.get(count-1)+blockW/(2*count));
   py.set(count, py.get(count-1)+blockH);
+  stroke(255,0,0);
+  line(30+blockW+px.get(count), height-30-py.get(count),
+       30+blockW+px.get(count), height-30);
   translate(30+px.get(count), height-30-py.get(count));
   stackBlock(count);
   countBlock(count);
-  delay(5);
 }
 
 
 //Put a block at (-x, y) from the top block
 void block(float x, float y) {
   fill(0);
-  rectMode(CENTER);
-  rect(-x+blockW/2, y-blockH/2, blockW, blockH);
+  stroke(0);
+  strokeWeight(1/2);
+  line(-x, y-blockH/2, -x+blockW, y-blockH/2);
+  //rectMode(CENTER);
+  //rect(-x+blockW/2, y-blockH/2, blockW, blockH);
 }
 
 //Stack blocks as many as 'count', starting from the bottom.
