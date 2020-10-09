@@ -24,7 +24,7 @@ void setup() {
   size(1200, 600, P3D);
   background(0);
   lights();
-  blendMode(LIGHTEST);
+  //blendMode(LIGHTEST);
   
   camera(width/2, 0,        height/tan(PI/3),
          width/2, height/2, 0,
@@ -70,7 +70,6 @@ void draw() {
   
   stackBlock(blockNum);
   countBlock();
-  
 }
 
 //=================================================
@@ -102,7 +101,6 @@ void moveCam(){
   cex = ccx + cexMov;
   cey = ccy - ceyMov;
   cez = px.get(blockNum)/tan(PI/3) + cezMov;
-  
   
   if(mousePressed){
     if(mouseX>width*0.8){
@@ -146,7 +144,7 @@ void drawGround(){
   endShape(CLOSE);
 }
 
-//Put a block at (x, y, z) to be the LEFT_BOTTOM mid line
+//Put a block at (x, y, z) to be the LEFT_BOTTOM_MID line
 void block(float x, float y, float z) {
   fill(140, 100);
   stroke(255);
@@ -173,6 +171,7 @@ void block(float x, float y, float z) {
   pushMatrix();
   translate(x+blockLength/2+gox, height-y-blockHeight/2-goy, gox+z);
   lights();
+  fill(255);
   box(blockLength, blockHeight, blockWidth);
   popMatrix();
 }
