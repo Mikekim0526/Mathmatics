@@ -2,13 +2,15 @@
 int blockLength = 240;
 int blockHeight = 20;
 int blockWidth = 40;
+float blockLengthInc = blockLength*0.25;
+float blockHeightInc = blockHeight*0.75;
 float blockNum = 10;
+float blockIncRate = 1;
 
 //Graph Origin, Camera Eye level, Camera Center point
 float gox, goy, goz;
 float cex, cey, cez;
 float ccx, ccy, ccz;
-
 
 void setup() {
   size(1200, 600, P3D);
@@ -26,11 +28,11 @@ void setup() {
   //Initialize Camera Eye level at (cex, cey, cez) of world coordinate xy-plane (regardless of graph) 
   //Default Camera Eye level: MIDDLE_TOP of image plane
   //Default AV(Angle of View): PI/3
-  cex=width/2;   cey=0;          cez=height/tan(PI/3);
+  cex=blockNum*blockLengthInc/2;   cey=height-blockNum*blockHeight/2;   cez=height/tan(PI/6);
   
   //Initialize screen center(focus level) to (ccx, ccy, ccz) of world coordinate system (regardless of graph)
   //Default Center: Center of Image plane
-  ccx=width/2;   ccy=height/2;   ccz=0;
+  ccx=blockNum*blockLengthInc/2;   ccy=height-blockNum*blockHeight/2;   ccz=0;
 }
 
 void draw() {
@@ -38,11 +40,17 @@ void draw() {
   camera(cex, cey, cez, ccx, ccy, ccz, 0, 1, 0);
   ground();
   for(int i=0; i<blockNum; i++){
-    block(i*blockLength/4, i*(blockHeight-5), 0);
+    block(i*blockLengthInc, i*blockHeightInc, 0);
   }
   
   if(keyPressed){
-    blockNum+=0.2;
+    if(key=='l'){
+      blockNum+=blockIncRate;
+    }else if (key == 'h'){
+      blockNum-=blockIncRate;
+    }else if (key == 'i'){
+      blockNum=blockIncRate;
+    }
   }
 }
 
@@ -58,8 +66,11 @@ void ground(){
 }
 
 void moveCam(){
-  int cexInc = 3;
-  float ceyInc = 1;
+  float cexInc = blockLengthInc*blockIncRate/2;
+  float ceyInc = blockHeightInc*blockIncRate/2;
+  
+  //cex=blockNum*blockLengthInc/2;   cey=height-blockNum*blockHeight/2;
+  //ccx=blockNum*blockLengthInc/2;   ccy=height-blockNum*blockHeight/2;
   
   if(mousePressed){
     if(mouseX>width*0.8){
@@ -78,6 +89,24 @@ void moveCam(){
       ccy+= ceyInc;
     }
   }
+  
+  if(keyPressed){
+    if(key == 'l'){
+      cex+= cexInc;
+      ccx+= cexInc;
+      cey-= ceyInc;
+      ccy-= ceyInc;
+    } else if (key == 'h'){
+      cex-= cexInc;
+      ccx-= cexInc;
+      cey+= ceyInc;
+      ccy+= ceyInc;
+    }
+  }
+  
+  //cex=blockNum*(blockWidth*0./2;
+  //cey=blockNum*blockHeight;
+  cez=blockNum*blockWidth/tan(PI/6);
 }
 
 void block(float x, float y, float z) {
@@ -108,4 +137,15 @@ void block(float x, float y, float z) {
   lights();
   box(blockLength, blockHeight, blockWidth);
   popMatrix();
+}
+
+void keyPressed(){
+  if (key == 'j'){
+    blockNum -= blockIncRate;
+    //cex -= 
+  } else if (key == 'k'){
+    blockNum += blockIncRate;
+  } else if (key == 'i'){
+    blockNum = 10;
+  }
 }
