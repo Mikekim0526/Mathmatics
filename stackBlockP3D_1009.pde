@@ -18,6 +18,7 @@ FloatList py;
 float gox, goy, goz;
 float cex, cey, cez;
 float ccx, ccy, ccz;
+float cexMov, ceyMov, cezMov;
 
 void setup() {
   size(1200, 600, P3D);
@@ -36,7 +37,8 @@ void setup() {
   //Default Camera Eye level: MIDDLE_TOP of image plane
   //Default AV(Angle of View): PI/3
   //cex=width/2;   cey=0;          cez=height/tan(PI/3);
-  cex=blockLength/2;   cey=height-blockHeight/2;   cez=height/tan(PI/6);
+  cex=blockLength/2;   cey=height-blockHeight/2;   cez=height/tan(PI/3);
+  cexMov=0;            ceyMov=0;                   cezMov=0;
   
   //Initialize screen center(focus level) to (ccx, ccy, ccz) of world coordinate system (regardless of graph)
   //Default Center: Center of Image plane
@@ -51,8 +53,8 @@ void setup() {
   py.set(0, 0);
   
   blockNum=1;
+  blockData=0;
   newBlockData(blockNum);
-  blockData=1;
 }
 
 void draw() {
@@ -69,15 +71,6 @@ void draw() {
   stackBlock(blockNum);
   countBlock();
   
-  if(keyPressed){
-    if(key=='l'){
-      blockNum+=blockNumInc;
-    }else if (key == 'h'){
-      blockNum-=blockNumInc;
-    }else if (key == 'i'){
-      blockNum=1;
-    }
-  }
 }
 
 //=================================================
@@ -86,9 +79,11 @@ void draw() {
 
 //Using the recorded blockData(0 ~ Data), calculate new blocks(Data+1 ~ Num)
 void newBlockData(int cnt) {
-  for (int i=blockData; i==cnt; i++){
-    px.set(i+1, px.get(i)+blockLength/(2*i+2));
-    py.set(i+1, py.get(i)+blockHeight);
+  for (int i=blockData; i<cnt; i++){
+    //px.set(i+1, px.get(i)+blockLength/(2*i+2));
+    //py.set(i+1, py.get(i)+blockHeight);
+    px.set(i+1, i*blockLengthInc);
+    py.set(i+1, i*blockHeightInc);
   }
   blockData = cnt;
 }
@@ -101,28 +96,25 @@ void moveCam(){
   
   //cex=blockNum*blockLengthInc/2;   cey=height-blockNum*blockHeight/2;
   //ccx=blockNum*blockLengthInc/2;   ccy=height-blockNum*blockHeight/2;
-  cex = px.get(blockNum-1)/2;
-  cey = height - py.get(blockNum-1)/2;
-  ccx = cex;
-  ccy = cey;
-  cez = px.get(blockNum-1)/tan(PI/6);
+  ccx = px.get(blockNum)/2;
+  ccy = height - py.get(blockNum)/2;
   ccz = 0;
+  cex = ccx + cexMov;
+  cey = ccy - ceyMov;
+  cez = px.get(blockNum)/tan(PI/3) + cezMov;
+  
   
   if(mousePressed){
     if(mouseX>width*0.8){
-      cex+= cexInc;
-      ccx+= cexInc;
+      cexMov+= cexInc;
     } else if(mouseX<width*0.2){
-      cex-= cexInc;
-      ccx-= cexInc;
+      cexMov-= cexInc;
     }
     
-    if(mouseY<height*0.2){
-      cey-= ceyInc;
-      ccy-= ceyInc;
+  if(mouseY<height*0.2){
+      ceyMov+= ceyInc;
     } else if(mouseY>height*0.8){
-      cey+= ceyInc;
-      ccy+= ceyInc;
+      ceyMov-= ceyInc;
     }
   }
   
@@ -152,13 +144,13 @@ void drawGround(){
   vertex(width, height+blockHeight/2, -height/tan(PI/6));
   vertex(width, height+blockHeight/2, height/tan(PI/6));
   endShape(CLOSE);
-  //stackBlock(blockNum);
 }
 
+//Put a block at (x, y, z) to be the LEFT_BOTTOM mid line
 void block(float x, float y, float z) {
   fill(140, 100);
   stroke(255);
-  strokeWeight(1);
+  strokeWeight(3);
 
   //beginShape(QUADS);
   //vertex(x-blockLength/2, y-blockHeight/2, z-blockWidth/2);
@@ -179,7 +171,7 @@ void block(float x, float y, float z) {
   //endShape(CLOSE);
   
   pushMatrix();
-  translate(x+blockLength/2+gox, height-blockHeight/2-goy, gox+z);
+  translate(x+blockLength/2+gox, height-y-blockHeight/2-goy, gox+z);
   lights();
   box(blockLength, blockHeight, blockWidth);
   popMatrix();
@@ -193,17 +185,9 @@ void stackBlock(int cnt){
 }
 
 void countBlock(){
-  if (key == 'h'){
+  if(keyPressed && key == 'j' && blockNum >1){
     blockNum -= blockNumInc;
-  } else if (key == 'l'){
+  } else if(keyPressed && key == 'k' && blockNum < blockNumMax){
     blockNum += blockNumInc;
-  } else if(keyPressed && key == 'j'){
-    blockNum -= blockNumInc;
-  } else if(keyPressed && key == 'k'){
-    blockNum += blockNumInc;
-  }
-  
-  if(blockNum >=blockNumMax){
-    blockNum = blockNumMax;
   }
 }
